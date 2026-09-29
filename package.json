@@ -18,6 +18,7 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "expo-video": "~57.0.5",
     "nativewind": "^5.0.0-preview.2",
     "react": "19.2.3",
     "react-aria": "^3.52.1",
