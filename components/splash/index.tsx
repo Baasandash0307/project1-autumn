@@ -90,7 +90,7 @@ export function Splash({ onFinish }: SplashProps) {
                 // Эхэнд F голд, төгсгөлд Foodie голд байна.
                 translateX: reveal.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [wordWidth / 2, 0],
+                  outputRange: [wordWidth, 0],
                 }),
               },
             ],
