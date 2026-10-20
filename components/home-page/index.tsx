@@ -10,7 +10,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 type Dish = {
   id: number;
@@ -85,6 +88,7 @@ export default function HomePage() {
   const [cart, setCart] = useState<number[]>([]);
   const [selected, setSelected] = useState<Dish | null>(null);
   const [gridWidth, setGridWidth] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const cardWidth = Math.max(0, (gridWidth - GAP) / 2);
 
@@ -310,7 +314,10 @@ export default function HomePage() {
       </ScrollView>
 
       {/* ScrollView-ийн дараа байрласан blur navigation. */}
-      <View style={styles.navigation}>
+      <View
+        pointerEvents={selected ? "none" : "auto"}
+        style={[styles.navigation, selected && styles.navigationHidden]}
+      >
         <BlurView
           intensity={75}
           tint="dark"
@@ -344,21 +351,33 @@ export default function HomePage() {
         visible={selected !== null}
         animationType="slide"
         onRequestClose={() => setSelected(null)}
+        statusBarTranslucent
       >
         {selected && (
-          <SafeAreaView style={styles.screen} edges={["top", "bottom"]}>
+          <View
+            style={[
+              styles.screen,
+              {
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom,
+              },
+            ]}
+          >
             <View style={styles.detailHeader}>
               <Pressable
-                hitSlop={12}
+                accessibilityRole="button"
                 accessibilityLabel="Back"
                 onPress={() => setSelected(null)}
+                style={styles.headerButton}
               >
                 <Text style={styles.back}>‹</Text>
               </Pressable>
 
               <Pressable
-                hitSlop={12}
+                accessibilityRole="button"
+                accessibilityLabel="Toggle favorite"
                 onPress={() => toggleFavorite(selected.id)}
+                style={styles.headerButton}
               >
                 <Text
                   style={[
@@ -416,7 +435,7 @@ export default function HomePage() {
                 <Text style={styles.addText}>+ Add to cart</Text>
               </Pressable>
             </View>
-          </SafeAreaView>
+          </View>
         )}
       </Modal>
     </SafeAreaView>
@@ -603,6 +622,7 @@ const styles = StyleSheet.create({
     bottom: 32,
     left: 20,
     right: 20,
+    zIndex: 1,
     flexDirection: "row",
     paddingVertical: 14,
     borderRadius: 50,
@@ -610,6 +630,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(30,32,40,0.35)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
+  },
+  navigationHidden: {
+    opacity: 0,
   },
   navItem: {
     flex: 1,
@@ -626,16 +649,24 @@ const styles = StyleSheet.create({
   },
 
   detailHeader: {
-    height: 50,
+    zIndex: 2,
+    height: 56,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
+  },
+  headerButton: {
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   back: {
     color: "#FFFFFF",
     fontSize: 36,
     lineHeight: 40,
+    includeFontPadding: false,
   },
   detailContent: {
     padding: 24,
