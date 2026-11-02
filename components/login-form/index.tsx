@@ -149,14 +149,6 @@ export function LoginForm() {
                     ? "Welcome\nback."
                     : "Make it\nyours."}
               </Text>
-
-              <Text style={styles.subtitle}>
-                {screen === "choice"
-                  ? "Something delicious is waiting for you."
-                  : isLogin
-                    ? "Sign in. Your favorites are waiting."
-                    : "Create an account and find your favorites."}
-              </Text>
             </View>
 
             {screen === "choice" ? (
