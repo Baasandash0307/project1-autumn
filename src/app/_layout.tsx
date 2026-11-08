@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { AuthProvider } from '@/context/auth';
 import '@/global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -25,7 +26,9 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider mode="system">
-      <Stack screenOptions={{ headerShown: false }} />
+      <AuthProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </AuthProvider>
     </GluestackUIProvider>
   );
 }

@@ -1,6 +1,9 @@
+import { useAuth } from "@/context/auth";
 import { BlurView } from "expo-blur";
-import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -81,6 +84,8 @@ const tabs = [
 const money = (value: number) => `${value.toLocaleString()}₮`;
 
 export default function HomePage() {
+  const router = useRouter();
+  const { isLoggedIn, isReady } = useAuth();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [tab, setTab] = useState<Tab>("home");
@@ -88,6 +93,7 @@ export default function HomePage() {
   const [cart, setCart] = useState<number[]>([]);
   const [selected, setSelected] = useState<Dish | null>(null);
   const [gridWidth, setGridWidth] = useState(0);
+  const pendingOrder = useRef(false);
   const insets = useSafeAreaInsets();
 
   const cardWidth = Math.max(0, (gridWidth - GAP) / 2);
@@ -133,6 +139,31 @@ export default function HomePage() {
     0,
   );
 
+  const placeOrder = () => {
+    pendingOrder.current = false;
+    setCart([]);
+    setTab("home");
+    Alert.alert("Захиалга амжилттай", "Таны захиалгыг хүлээж авлаа.");
+  };
+
+  const handleCheckout = () => {
+    if (cart.length === 0 || !isReady) return;
+
+    if (!isLoggedIn) {
+      pendingOrder.current = true;
+      router.push("/login");
+      return;
+    }
+
+    placeOrder();
+  };
+
+  useEffect(() => {
+    if (isLoggedIn && pendingOrder.current && cart.length > 0) {
+      placeOrder();
+    }
+  }, [isLoggedIn, cart.length]);
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView
@@ -143,7 +174,9 @@ export default function HomePage() {
       >
         <View style={styles.header}>
           <View>
-            <Text style={styles.muted}>Welcome back</Text>
+            <Text style={styles.muted}>
+              {isLoggedIn ? "Welcome back" : "Welcome"}
+            </Text>
             <Text style={styles.brand}>Foodie.</Text>
           </View>
 
@@ -306,10 +339,23 @@ export default function HomePage() {
         )}
 
         {tab === "cart" && cart.length > 0 && (
-          <View style={styles.total}>
-            <Text style={styles.sectionTitle}>Total</Text>
-            <Text style={styles.price}>{money(total)}</Text>
-          </View>
+          <>
+            <View style={styles.total}>
+              <Text style={styles.sectionTitle}>Total</Text>
+              <Text style={styles.price}>{money(total)}</Text>
+            </View>
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleCheckout}
+              style={({ pressed }) => [
+                styles.checkoutButton,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Text style={styles.checkoutText}>Захиалах</Text>
+            </Pressable>
+          </>
         )}
       </ScrollView>
 
@@ -541,7 +587,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 
-  // Өргөнийг JSX дотор cardWidth-ээр өгсөн.
   grid: {
     width: "100%",
     flexDirection: "row",
@@ -615,6 +660,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 24,
+  },
+  checkoutButton: {
+    marginTop: 18,
+    minHeight: 56,
+    borderRadius: 18,
+    backgroundColor: "#FF7668",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkoutText: {
+    color: "#24262F",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  pressed: {
+    opacity: 0.78,
+    transform: [{ scale: 0.985 }],
   },
 
   navigation: {

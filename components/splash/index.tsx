@@ -12,7 +12,6 @@ export function Splash({ onFinish }: SplashProps) {
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const screenOpacity = useRef(new Animated.Value(1)).current;
 
-  // Parent дахин render хийхэд анимаци дахин эхлэхгүй.
   const finishRef = useRef(onFinish);
 
   useEffect(() => {
@@ -29,7 +28,6 @@ export function Splash({ onFinish }: SplashProps) {
     const animation = Animated.sequence([
       Animated.delay(250),
 
-      // Эхлээд F үсэг тодорно.
       Animated.timing(logoOpacity, {
         toValue: 1,
         duration: 180,
@@ -38,7 +36,6 @@ export function Splash({ onFinish }: SplashProps) {
 
       Animated.delay(180),
 
-      // oodie нь F-ийн араас гарна.
       Animated.timing(reveal, {
         toValue: 1,
         duration: 850,
@@ -48,7 +45,6 @@ export function Splash({ onFinish }: SplashProps) {
 
       Animated.delay(550),
 
-      // Login хуудас руу зөөлөн шилжинэ.
       Animated.timing(screenOpacity, {
         toValue: 0,
         duration: 300,
@@ -67,7 +63,6 @@ export function Splash({ onFinish }: SplashProps) {
 
   return (
     <Animated.View style={[styles.screen, { opacity: screenOpacity }]}>
-      {/* Үсгийн бодит өргөнийг хэмжинэ. */}
       <Text
         pointerEvents="none"
         accessible={false}
@@ -87,7 +82,6 @@ export function Splash({ onFinish }: SplashProps) {
             opacity: logoOpacity,
             transform: [
               {
-                // Эхэнд F голд, төгсгөлд Foodie голд байна.
                 translateX: reveal.interpolate({
                   inputRange: [0, 1],
                   outputRange: [wordWidth, 0],

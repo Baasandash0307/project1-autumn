@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { View } from "react-native";
 
-import { LoginForm } from "@/components/login-form";
+import HomePage from "@/components/home-page";
 import { Splash } from "@/components/splash";
 
 export default function Index() {
@@ -13,7 +13,7 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1 }}>
-      <LoginForm />
+      <HomePage />
       {showSplash && <Splash onFinish={handleSplashFinish} />}
     </View>
   );

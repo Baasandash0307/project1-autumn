@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -19,6 +20,7 @@ type Screen = "choice" | "login" | "register";
 
 export function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [screen, setScreen] = useState<Screen>("choice");
   const [email, setEmail] = useState("");
@@ -83,7 +85,14 @@ export function LoginForm() {
     setError("");
 
     // Одоогоор demo: энд login / register API-гаа холбоно.
-    router.replace("/home");
+    login();
+
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace("/");
   };
 
   const isLogin = screen === "login";
@@ -152,17 +161,29 @@ export function LoginForm() {
             </View>
 
             {screen === "choice" ? (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => changeScreen("login")}
-                style={({ pressed }) => [
-                  styles.primaryButton,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Text style={styles.primaryText}>Let’s get started</Text>
-                <Text style={styles.primaryArrow}>↗</Text>
-              </Pressable>
+              <View style={styles.choiceActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => changeScreen("login")}
+                  style={({ pressed }) => [
+                    styles.primaryButton,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text style={styles.primaryText}>Let’s get started</Text>
+                  <Text style={styles.primaryArrow}>↗</Text>
+                </Pressable>
+
+                {router.canGoBack() && (
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => router.back()}
+                    style={styles.backButton}
+                  >
+                    <Text style={styles.backText}>← Back to menu</Text>
+                  </Pressable>
+                )}
+              </View>
             ) : (
               <View style={styles.card}>
                 <View style={styles.form}>
@@ -333,6 +354,9 @@ const styles = StyleSheet.create({
   panel: {
     width: "100%",
     maxWidth: 420,
+  },
+  choiceActions: {
+    gap: 12,
   },
   intro: {
     marginBottom: 28,

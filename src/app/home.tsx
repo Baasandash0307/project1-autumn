@@ -1,11 +1,5 @@
-import { Stack } from "expo-router";
-import HomePage from "../../components/home-page";
+import { Redirect } from "expo-router";
 
 export default function Home() {
-  return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <HomePage />
-    </>
-  );
+  return <Redirect href="/" />;
 }
