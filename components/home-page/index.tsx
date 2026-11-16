@@ -151,9 +151,7 @@ export default function HomePage() {
     const lines: CheckoutLine[] = [...counts.entries()].flatMap(
       ([id, quantity]) => {
         const dish = dishes.find((item) => item.id === id);
-        return dish
-          ? [{ name: dish.name, quantity, price: dish.price }]
-          : [];
+        return dish ? [{ name: dish.name, quantity, price: dish.price }] : [];
       },
     );
 
@@ -277,15 +275,14 @@ export default function HomePage() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
             {tab === "home"
-              ? "Popular dishes"
+              ? "Бүтээгдэхүүн"
               : tab === "favorites"
-                ? "Your favorites"
-                : "Your cart"}
+                ? "Таны дуртай"
+                : "Таны сагс"}
           </Text>
           <Text style={styles.muted}>{visibleDishes.length} dishes</Text>
         </View>
 
-        {/* Card-ийн өргөнийг энэ View-ийн хэмжээнээс тооцно. */}
         <View
           style={styles.grid}
           onLayout={(event) => setGridWidth(event.nativeEvent.layout.width)}
@@ -379,7 +376,7 @@ export default function HomePage() {
         {tab === "cart" && cart.length > 0 && (
           <>
             <View style={styles.total}>
-              <Text style={styles.sectionTitle}>Total</Text>
+              <Text style={styles.sectionTitle}>Төлөх дүн</Text>
               <Text style={styles.price}>{money(total)}</Text>
             </View>
 
