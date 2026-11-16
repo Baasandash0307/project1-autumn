@@ -1,9 +1,9 @@
 import { useAuth } from "@/context/auth";
+import { useCheckout, type CheckoutLine } from "@/context/checkout";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  Alert,
   Image,
   Modal,
   Pressable,
@@ -86,6 +86,7 @@ const money = (value: number) => `${value.toLocaleString()}₮`;
 export default function HomePage() {
   const router = useRouter();
   const { isLoggedIn, isReady, user } = useAuth();
+  const { beginCheckout, settledId } = useCheckout();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [tab, setTab] = useState<Tab>("home");
@@ -94,6 +95,7 @@ export default function HomePage() {
   const [selected, setSelected] = useState<Dish | null>(null);
   const [gridWidth, setGridWidth] = useState(0);
   const pendingOrder = useRef(false);
+  const seenSettlement = useRef(0);
   const insets = useSafeAreaInsets();
 
   const cardWidth = Math.max(0, (gridWidth - GAP) / 2);
@@ -139,11 +141,25 @@ export default function HomePage() {
     0,
   );
 
-  const placeOrder = () => {
+  const openPayment = () => {
+    const counts = new Map<number, number>();
+
+    cart.forEach((id) => {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    });
+
+    const lines: CheckoutLine[] = [...counts.entries()].flatMap(
+      ([id, quantity]) => {
+        const dish = dishes.find((item) => item.id === id);
+        return dish
+          ? [{ name: dish.name, quantity, price: dish.price }]
+          : [];
+      },
+    );
+
     pendingOrder.current = false;
-    setCart([]);
-    setTab("home");
-    Alert.alert("Захиалга амжилттай", "Таны захиалгыг хүлээж авлаа.");
+    beginCheckout(lines);
+    router.push("/payment");
   };
 
   const handleCheckout = () => {
@@ -155,14 +171,22 @@ export default function HomePage() {
       return;
     }
 
-    placeOrder();
+    openPayment();
   };
 
   useEffect(() => {
     if (isLoggedIn && pendingOrder.current && cart.length > 0) {
-      placeOrder();
+      openPayment();
     }
   }, [isLoggedIn, cart.length]);
+
+  useEffect(() => {
+    if (settledId === seenSettlement.current) return;
+
+    seenSettlement.current = settledId;
+    setCart([]);
+    setTab("home");
+  }, [settledId]);
 
   return (
     <SafeAreaView style={styles.screen}>

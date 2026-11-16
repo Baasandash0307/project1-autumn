@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider } from '@/context/auth';
+import { CheckoutProvider } from '@/context/checkout';
 import '@/global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -27,7 +28,9 @@ export default function RootLayout() {
   return (
     <GluestackUIProvider mode="system">
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <CheckoutProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </CheckoutProvider>
       </AuthProvider>
     </GluestackUIProvider>
   );
