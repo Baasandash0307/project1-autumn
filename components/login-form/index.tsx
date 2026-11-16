@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/auth";
+import { notify } from "@/lib/notifications";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -85,8 +86,11 @@ export function LoginForm() {
     Keyboard.dismiss();
     setError("");
 
-    // Одоогоор demo: энд login / register API-гаа холбоно.
     login({ email: cleanEmail });
+
+    if (isLogin) {
+      void notify("Амжилттай нэвтэрлээ", "Тавтай морил.");
+    }
 
     if (next === "profile") {
       router.replace("/profile");

@@ -1,4 +1,5 @@
 import { useCheckout } from "@/context/checkout";
+import { notify } from "@/lib/notifications";
 import { Redirect, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -66,6 +67,7 @@ function PaymentSuccess({
         setShowCheck(true);
         flip.setValue(-1);
         confirmed.current();
+        void notify("Захиалга амжилттай", "Таны захиалгыг хүлээж авлаа.");
 
         Animated.parallel([
           Animated.spring(flip, {

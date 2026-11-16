@@ -27,6 +27,12 @@
       "expo-router",
       "expo-video",
       [
+        "expo-notifications",
+        {
+          "color": "#FF7668"
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#208AEF",

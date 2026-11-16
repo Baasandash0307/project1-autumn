@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider } from '@/context/auth';
 import { CheckoutProvider } from '@/context/checkout';
+import { ensureNotificationPermission } from '@/lib/notifications';
 import '@/global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -18,6 +19,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
+      void ensureNotificationPermission();
     }
   }, [loaded, error]);
 
