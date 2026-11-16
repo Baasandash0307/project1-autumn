@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/auth";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -20,6 +20,7 @@ type Screen = "choice" | "login" | "register";
 
 export function LoginForm() {
   const router = useRouter();
+  const { next } = useLocalSearchParams<{ next?: string }>();
   const { login } = useAuth();
 
   const [screen, setScreen] = useState<Screen>("choice");
@@ -85,7 +86,12 @@ export function LoginForm() {
     setError("");
 
     // Одоогоор demo: энд login / register API-гаа холбоно.
-    login();
+    login({ email: cleanEmail });
+
+    if (next === "profile") {
+      router.replace("/profile");
+      return;
+    }
 
     if (router.canGoBack()) {
       router.back();

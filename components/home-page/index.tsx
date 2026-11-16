@@ -85,7 +85,7 @@ const money = (value: number) => `${value.toLocaleString()}₮`;
 
 export default function HomePage() {
   const router = useRouter();
-  const { isLoggedIn, isReady } = useAuth();
+  const { isLoggedIn, isReady, user } = useAuth();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [tab, setTab] = useState<Tab>("home");
@@ -180,9 +180,23 @@ export default function HomePage() {
             <Text style={styles.brand}>Foodie.</Text>
           </View>
 
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>F</Text>
-          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={isLoggedIn ? "Profile" : "Log in"}
+            onPress={() => {
+              if (!isLoggedIn) {
+                router.push("/login?next=profile");
+                return;
+              }
+
+              router.push("/profile");
+            }}
+            style={styles.avatar}
+          >
+            <Text style={styles.avatarText}>
+              {user ? user.name.charAt(0).toUpperCase() : "F"}
+            </Text>
+          </Pressable>
         </View>
 
         <View style={styles.search}>

@@ -7,29 +7,57 @@ import {
   type ReactNode,
 } from "react";
 
+export type User = {
+  email: string;
+  name: string;
+};
+
 type AuthContextValue = {
+  user: User | null;
   isLoggedIn: boolean;
   isReady: boolean;
-  login: () => void;
+  login: (user: { email: string }) => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function nameFromEmail(email: string) {
+  const local = email.split("@")[0] ?? "";
+  const cleaned = local.replace(/[._-]+/g, " ").trim();
 
-  const login = useCallback(() => {
-    setIsLoggedIn(true);
+  if (!cleaned) return "Foodie";
+
+  return cleaned
+    .split(/\s+/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+
+  const login = useCallback(({ email }: { email: string }) => {
+    const cleanEmail = email.trim().toLowerCase();
+    setUser({
+      email: cleanEmail,
+      name: nameFromEmail(cleanEmail),
+    });
   }, []);
 
   const logout = useCallback(() => {
-    setIsLoggedIn(false);
+    setUser(null);
   }, []);
 
   const value = useMemo(
-    () => ({ isLoggedIn, isReady: true, login, logout }),
-    [isLoggedIn, login, logout],
+    () => ({
+      user,
+      isLoggedIn: user !== null,
+      isReady: true,
+      login,
+      logout,
+    }),
+    [user, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
