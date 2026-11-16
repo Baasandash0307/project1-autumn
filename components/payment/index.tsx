@@ -58,7 +58,7 @@ function PaymentSuccess({
 
       Animated.timing(flip, {
         toValue: 1,
-        duration: 220,
+        duration: 320,
         easing: Easing.in(Easing.cubic),
         useNativeDriver: true,
       }).start(({ finished }) => {
@@ -115,7 +115,9 @@ function PaymentSuccess({
           {showCheck ? (
             <Text style={styles.successMark}>✓</Text>
           ) : (
-            <Animated.View style={[styles.spinner, { transform: [{ rotate }] }]} />
+            <Animated.View
+              style={[styles.spinner, { transform: [{ rotate }] }]}
+            />
           )}
         </Animated.View>
       </View>
